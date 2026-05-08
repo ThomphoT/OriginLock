@@ -7,8 +7,12 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "test": "npx hardhat test",
+  "compile": "npx hardhat compile",
+  "deploy:amoy": "npx hardhat run scripts/deploy.cjs --network amoy",
+  "deploy:local": "npx hardhat run scripts/deploy.cjs --network localhost",
+  "export-abi": "copy artifacts\\contracts\\OriginLock.sol\\OriginLock.json ..\\frontend\\src\\services\\abi.json"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,6 +22,7 @@
     "@nomicfoundation/hardhat-toolbox": "^7.0.0",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.5",
     "@types/node": "^22.19.18",
+    "chai": "^6.2.2",
     "dotenv": "^17.4.2",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.4.5",
