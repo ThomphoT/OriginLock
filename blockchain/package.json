@@ -7,20 +7,20 @@
     "test": "test"
   },
   "scripts": {
-  "test": "npx hardhat test",
-  "compile": "npx hardhat compile",
-  "deploy:amoy": "npx hardhat run scripts/deploy.cjs --network amoy",
-  "deploy:local": "npx hardhat run scripts/deploy.cjs --network localhost",
-  "export-abi": "copy artifacts\\contracts\\OriginLock.sol\\OriginLock.json ..\\frontend\\src\\services\\abi.json"
-},
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "deploy:amoy": "npx hardhat run scripts/deploy.js --network amoy",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
+    "export-abi": "cp artifacts/contracts/OriginLock.sol/OriginLock.json ../frontend/src/services/abi.json"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.1.5",
-    "@nomicfoundation/hardhat-toolbox": "^7.0.0",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.5",
+    "@nomicfoundation/hardhat-viem": "^3.0.7",
     "@types/node": "^22.19.18",
     "chai": "^6.2.2",
     "dotenv": "^17.4.2",

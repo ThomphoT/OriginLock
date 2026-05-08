@@ -55,3 +55,8 @@ After setting the variable, you can run the deployment with the Sepolia network:
 ```shell
 npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
 ```
+
+## SMART CONTRACT
+``` Smart contract address:
+    0xc27b1dfedb1c3973f35cbc713300a73dd85400d7
+    ```
