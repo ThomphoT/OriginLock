@@ -1,0 +1,29 @@
+{
+  "name": "originlock-ai",
+  "version": "1.0.0",
+  "description": "OriginLock AI microservice powered by Ollama",
+  "main": "services/server.js",
+  "scripts": {
+    "start": "node services/server.js",
+    "dev": "nodemon services/server.js",
+    "test-ai": "node test.js"
+  },
+  "keywords": [
+    "originlock",
+    "ai",
+    "ollama",
+    "mistral",
+    "hackathon"
+  ],
+  "author": "OriginLock Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

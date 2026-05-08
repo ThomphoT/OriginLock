@@ -1,20 +1,40 @@
+/**
+ * ----------------------------------------
+ * BUILD ORIGINALITY PROMPT
+ * ----------------------------------------
+ */
 function buildOriginalityPrompt(
     newIdea,
     similarIdeas = []
 ) {
 
-    const formattedSimilarIdeas = similarIdeas.length > 0
-        ? similarIdeas.map((idea, index) => `
-${index + 1}. Title: ${idea.title}
-Description: ${idea.description}
-Similarity Score: ${idea.similarity}
-`).join('\n')
-        : 'No similar ideas were found.';
+    /**
+     * Format similar ideas
+     */
+    const formattedSimilarIdeas =
+        similarIdeas.length > 0
+            ? similarIdeas.map(
+                (idea, index) => `
+${index + 1}.
+Title: ${idea.title}
+
+Description:
+${idea.description}
+
+Similarity Score:
+${idea.similarity}
+`
+            ).join('\n')
+            : 'No highly similar ideas were found.';
+
 
     return `
-You are an expert innovation analyst and intellectual property advisor.
+You are an expert innovation analyst,
+startup strategist,
+and intellectual property advisor.
 
-Your task is to evaluate the originality and uniqueness of a new idea submission.
+Your task is to evaluate the originality
+and uniqueness of a startup idea.
 
 ==================================================
 NEW IDEA
@@ -29,52 +49,75 @@ SIMILAR EXISTING IDEAS
 ${formattedSimilarIdeas}
 
 ==================================================
-YOUR TASK
+ANALYSIS TASK
 ==================================================
 
-Analyze the new idea carefully.
+Analyze the startup idea carefully.
 
-1. Estimate how original the idea is on a scale of 1-10.
-2. Explain what makes the idea unique.
-3. Explain what parts overlap with existing ideas.
-4. Suggest at least 3 improvements or differentiators.
-5. Suggest potential industries or markets.
-6. Mention possible risks or weaknesses.
-7. Keep the response constructive and encouraging.
+Evaluate:
+
+1. Originality level
+2. Innovation quality
+3. Market differentiation
+4. Competitive overlap
+5. Improvement opportunities
+6. Commercial potential
+7. Risks and weaknesses
 
 ==================================================
 IMPORTANT RULES
 ==================================================
 
-- Be specific and practical.
-- Do not say the idea is "fully unique".
-- Most ideas have similarities to existing concepts.
-- Focus on helping the creator improve the idea.
-- Respond professionally.
-- Avoid overly generic feedback.
+- Be realistic and constructive
+- Do NOT claim the idea is completely unique
+- Most startups share similarities with others
+- Focus on practical improvements
+- Be concise but insightful
+- Use professional language
+- Encourage innovation while being honest
 
 ==================================================
 RESPONSE FORMAT
 ==================================================
 
+Return your response EXACTLY
+using this structure:
+
 Originality Score: X/10
+
+Executive Summary:
+- ...
 
 Strengths:
 - ...
-
-Overlaps:
+- ...
 - ...
 
-Improvements:
+Overlaps With Existing Ideas:
+- ...
+- ...
+- ...
+
+Improvement Suggestions:
+- ...
+- ...
 - ...
 
 Potential Markets:
 - ...
+- ...
+- ...
 
-Risks:
+Risks & Weaknesses:
+- ...
+- ...
+- ...
+
+Commercial Potential:
 - ...
 `;
 }
+
 
 module.exports = {
     buildOriginalityPrompt

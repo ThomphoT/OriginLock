@@ -1,6 +1,8 @@
-const similarityService = require('./similarity.service');
+const similarityService =
+    require('./similarity.service');
 
-const ollamaService = require('./ollama.service');
+const ollamaService =
+    require('./ollama.service');
 
 const {
     buildOriginalityPrompt
@@ -8,7 +10,9 @@ const {
 
 
 /**
- * Analyze originality of a new idea
+ * ----------------------------------------
+ * ANALYZE ORIGINALITY
+ * ----------------------------------------
  */
 async function analyzeOriginality({
     title,
@@ -18,16 +22,22 @@ async function analyzeOriginality({
 
     try {
 
+        /**
+         * Build full idea text
+         */
         const fullIdeaText = `
-Title: ${title}
+Title:
+${title}
 
 Description:
 ${description}
 `;
 
         /**
-         * STEP 1:
-         * Find semantically similar ideas
+         * ----------------------------------------
+         * STEP 1
+         * FIND SIMILAR IDEAS
+         * ----------------------------------------
          */
         const similarityResult =
             await similarityService.findSimilarIdeas(
@@ -36,6 +46,7 @@ ${description}
             );
 
         if (!similarityResult.success) {
+
             return {
                 success: false,
                 error: similarityResult.error
@@ -43,15 +54,34 @@ ${description}
         }
 
         /**
-         * STEP 2:
-         * Take top matches only
+         * ----------------------------------------
+         * STEP 2
+         * FILTER RELEVANT MATCHES
+         * ----------------------------------------
          */
-        const topMatches =
-            similarityResult.matches.slice(0, 5);
+        const similarityThreshold = 0.45;
+
+        const filteredMatches =
+            similarityResult.matches.filter(
+                match =>
+                    match.similarity >=
+                    similarityThreshold
+            );
 
         /**
-         * STEP 3:
-         * Build originality prompt
+         * ----------------------------------------
+         * STEP 3
+         * LIMIT TOP MATCHES
+         * ----------------------------------------
+         */
+        const topMatches =
+            filteredMatches.slice(0, 5);
+
+        /**
+         * ----------------------------------------
+         * STEP 4
+         * BUILD AI PROMPT
+         * ----------------------------------------
          */
         const prompt =
             buildOriginalityPrompt(
@@ -60,29 +90,47 @@ ${description}
             );
 
         /**
-         * STEP 4:
-         * Generate AI analysis
+         * ----------------------------------------
+         * STEP 5
+         * GENERATE AI ANALYSIS
+         * ----------------------------------------
          */
         const aiResult =
             await ollamaService.generate(prompt);
 
         if (!aiResult.success) {
+
             return {
                 success: false,
-                error: aiResult.error
+                error: aiResult.error,
+                fallback: aiResult.fallback
             };
         }
 
         /**
-         * STEP 5:
-         * Return final analysis
+         * ----------------------------------------
+         * STEP 6
+         * BUILD RESPONSE
+         * ----------------------------------------
          */
         return {
             success: true,
 
-            originalityAnalysis: aiResult.data,
+            originalityAnalysis:
+                aiResult.data,
 
-            similarIdeas: topMatches
+            metadata: {
+                analyzedIdeas:
+                    existingIdeas.length,
+
+                similarIdeasFound:
+                    topMatches.length,
+
+                similarityThreshold
+            },
+
+            similarIdeas:
+                topMatches
         };
 
     } catch (error) {
@@ -99,6 +147,7 @@ ${description}
         };
     }
 }
+
 
 module.exports = {
     analyzeOriginality

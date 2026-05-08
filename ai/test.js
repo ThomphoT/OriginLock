@@ -1,27 +1,173 @@
-const ollamaService = require('./services/ollama.service');
+require('dotenv').config({
+    path: require('path').resolve(__dirname, '.env')
+});
 
-async function test() {
+const ollamaService =
+    require('./services/ollama.service');
 
-    console.log('Testing AI generation...\n');
+const originalityService =
+    require('./services/originality.service');
 
-    const result = await ollamaService.generate(
-        'Give me 3 startup ideas for students'
-    );
+
+/**
+ * ----------------------------------------
+ * TEST AI GENERATION
+ * ----------------------------------------
+ */
+async function testGeneration() {
+
+    console.log(`
+========================================
+TESTING AI GENERATION
+========================================
+`);
+
+    const result =
+        await ollamaService.generate(
+            'Give me 3 innovative startup ideas for university students'
+        );
 
     console.log(result);
 
-    console.log('\n----------------------------------\n');
-
-    console.log('Testing embeddings...\n');
-
-    const embeddingResult = await ollamaService.generateEmbedding(
-        'AI powered grocery management platform'
-    );
-
-    console.log({
-        success: embeddingResult.success,
-        embeddingLength: embeddingResult.embedding?.length
-    });
+    console.log(`
+========================================
+GENERATION TEST COMPLETE
+========================================
+`);
 }
 
-test();
+
+/**
+ * ----------------------------------------
+ * TEST EMBEDDINGS
+ * ----------------------------------------
+ */
+async function testEmbeddings() {
+
+    console.log(`
+========================================
+TESTING EMBEDDINGS
+========================================
+`);
+
+    const embeddingResult =
+        await ollamaService.generateEmbedding(
+            'AI-powered grocery management platform'
+        );
+
+    console.log({
+        success:
+            embeddingResult.success,
+
+        embeddingLength:
+            embeddingResult.embedding?.length,
+
+        cached:
+            embeddingResult.cached
+    });
+
+    console.log(`
+========================================
+EMBEDDING TEST COMPLETE
+========================================
+`);
+}
+
+
+/**
+ * ----------------------------------------
+ * TEST ORIGINALITY ANALYSIS
+ * ----------------------------------------
+ */
+async function testOriginality() {
+
+    console.log(`
+========================================
+TESTING ORIGINALITY ANALYSIS
+========================================
+`);
+
+    const result =
+        await originalityService.analyzeOriginality({
+
+            title:
+                'StudyFlow AI',
+
+            description:
+                'An AI-powered academic planning assistant that helps students manage assignments, schedules, and productivity.',
+
+            existingIdeas: [
+                {
+                    id: 1,
+
+                    title:
+                        'Notion AI',
+
+                    description:
+                        'AI productivity and organization assistant.'
+                },
+
+                {
+                    id: 2,
+
+                    title:
+                        'Grammarly',
+
+                    description:
+                        'AI writing assistant for students and professionals.'
+                },
+
+                {
+                    id: 3,
+
+                    title:
+                        'Todoist',
+
+                    description:
+                        'Task management and productivity platform.'
+                }
+            ]
+        });
+
+    console.log(JSON.stringify(
+        result,
+        null,
+        2
+    ));
+
+    console.log(`
+========================================
+ORIGINALITY TEST COMPLETE
+========================================
+`);
+}
+
+
+/**
+ * ----------------------------------------
+ * RUN ALL TESTS
+ * ----------------------------------------
+ */
+async function runTests() {
+
+    console.log(`
+========================================
+ORIGINLOCK AI TEST SUITE
+========================================
+`);
+
+    await testGeneration();
+
+    await testEmbeddings();
+
+    await testOriginality();
+
+    console.log(`
+========================================
+ALL TESTS COMPLETED
+========================================
+`);
+}
+
+
+runTests();
