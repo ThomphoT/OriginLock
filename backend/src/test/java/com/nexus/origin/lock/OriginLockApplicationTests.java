@@ -1,13 +1,13 @@
 package com.nexus.origin.lock;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 class OriginLockApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void applicationCanBeConstructed() {
+        assertDoesNotThrow(OriginLockApplication::new);
+    }
 }

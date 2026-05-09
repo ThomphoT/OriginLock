@@ -1,7 +1,7 @@
 package com.nexus.origin.lock.models;
 
 import jakarta.persistence.*;
-        import lombok.*;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
