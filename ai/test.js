@@ -24,7 +24,7 @@ TESTING AI GENERATION
 
     const result =
         await ollamaService.generate(
-            'Give me 3 innovative startup ideas for university students'
+            'Give me one startup idea.'
         );
 
     console.log(result);

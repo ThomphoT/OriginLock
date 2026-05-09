@@ -45,20 +45,12 @@ async function generate(
     prompt,
     model = OLLAMA_MODEL
 ) {
-
     try {
-
-        /**
-         * Check cache first
-         */
-        const cacheKey =
-            createCacheKey(prompt);
-
-        const cached =
-            getCache(cacheKey);
+        // Check cache first
+        const cacheKey = createCacheKey(prompt);
+        const cached = getCache(cacheKey);
 
         if (cached) {
-
             console.log('Serving from cache');
 
             return {
@@ -68,38 +60,23 @@ async function generate(
             };
         }
 
-        /**
-         * MODERN OLLAMA CHAT API
-         */
+        // Use /api/generate (more reliable for phi3)
         const response = await axios.post(
-            `${OLLAMA_BASE_URL}/api/chat`,
+            `${OLLAMA_BASE_URL}/api/generate`,
             {
                 model,
-
-                messages: [
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-
+                prompt,
                 stream: false
             },
             {
-                timeout: 120000
+                timeout: 300000
             }
         );
 
-        const aiText =
-            response.data.message.content;
+        const aiText = response.data.response;
 
-        /**
-         * Store in cache
-         */
-        setCache(
-            cacheKey,
-            aiText
-        );
+        // Save to cache
+        setCache(cacheKey, aiText);
 
         return {
             success: true,
@@ -108,21 +85,20 @@ async function generate(
         };
 
     } catch (error) {
-
         console.error(
             'Ollama Generate Error:',
-            error.message
+            error.response?.data || error.message
         );
 
         return {
             success: false,
             error: 'AI service temporarily unavailable',
             fallback: true,
-            details: error.message
+            details:
+                error.response?.data || error.message
         };
     }
 }
-
 
 /**
  * ----------------------------------------
@@ -160,7 +136,7 @@ async function generateEmbedding(text) {
                 prompt: text
             },
             {
-                timeout: 120000
+                timeout: 300000
             }
         );
 
