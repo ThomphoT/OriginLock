@@ -30,6 +30,8 @@ public class Idea {
 
     private String txHash;
 
+    private Boolean blockchainVerified;
+
     private LocalDateTime createdAt;
 
     @ManyToOne

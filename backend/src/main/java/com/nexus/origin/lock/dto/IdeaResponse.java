@@ -10,6 +10,7 @@ public record IdeaResponse(
         String description,
         String contentHash,
         String txHash,
+        Boolean blockchainVerified,
         LocalDateTime createdAt,
         UserSummary user
 ) {
@@ -20,6 +21,7 @@ public record IdeaResponse(
                 idea.getDescription(),
                 idea.getContentHash(),
                 idea.getTxHash(),
+                idea.getBlockchainVerified(),
                 idea.getCreatedAt(),
                 idea.getUser() == null ? null : UserSummary.from(idea.getUser())
         );

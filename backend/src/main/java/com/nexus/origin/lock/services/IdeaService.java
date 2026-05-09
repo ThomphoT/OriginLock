@@ -6,9 +6,9 @@ import com.nexus.origin.lock.exceptions.ResourceNotFoundException;
 import com.nexus.origin.lock.models.Idea;
 import com.nexus.origin.lock.models.User;
 import com.nexus.origin.lock.repositories.IdeaRepository;
-import com.nexus.origin.lock.repositories.UserRepository;
 import com.nexus.origin.lock.utils.HashUtil;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +20,17 @@ import java.util.List;
 public class IdeaService {
 
     private final IdeaRepository ideaRepository;
-    private final UserRepository userRepository;
+    private final BlockchainVerificationService blockchainVerificationService;
+    private final AuthenticatedUserService authenticatedUserService;
 
-    public IdeaService(IdeaRepository ideaRepository, UserRepository userRepository) {
+    public IdeaService(
+            IdeaRepository ideaRepository,
+            BlockchainVerificationService blockchainVerificationService,
+            AuthenticatedUserService authenticatedUserService
+    ) {
         this.ideaRepository = ideaRepository;
-        this.userRepository = userRepository;
+        this.blockchainVerificationService = blockchainVerificationService;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
     @Transactional(readOnly = true)
@@ -49,22 +55,27 @@ public class IdeaService {
     }
 
     public Idea createIdea(CreateIdeaRequest request) {
-        String hash = HashUtil.sha256(request.title() + "\n" + request.description());
+        String hash = request.contentHash() == null || request.contentHash().isBlank()
+                ? HashUtil.sha256(request.title() + "\n" + request.description())
+                : request.contentHash().toLowerCase();
 
         if (ideaRepository.existsByContentHash(hash)) {
             throw new DuplicateResourceException("This idea has already been registered");
         }
 
-        User user = null;
-        if (request.userId() != null) {
-            user = userRepository.findById(request.userId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = authenticatedUserService.currentUser();
+        if (request.userId() != null && !request.userId().equals(user.getId())) {
+            throw new AccessDeniedException("Ideas can only be created for the authenticated user");
         }
+
+        boolean blockchainVerified = blockchainVerificationService.verifyTransaction(request.txHash());
 
         Idea idea = Idea.builder()
                 .title(request.title())
                 .description(request.description())
                 .contentHash(hash)
+                .txHash(request.txHash())
+                .blockchainVerified(blockchainVerified)
                 .createdAt(LocalDateTime.now())
                 .user(user)
                 .build();
