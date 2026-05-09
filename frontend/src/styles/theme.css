@@ -1,0 +1,41 @@
+/* OriginLock Theme Extensions
+   Additional theme-level styles that complement index.css
+*/
+
+/* Certificate-specific styles */
+.certificate-holographic {
+  background: linear-gradient(
+    135deg,
+    hsl(271 81% 56% / 0.05) 0%,
+    hsl(195 100% 50% / 0.08) 25%,
+    hsl(271 81% 56% / 0.03) 50%,
+    hsl(195 100% 50% / 0.06) 75%,
+    hsl(271 81% 56% / 0.05) 100%
+  );
+}
+
+/* AI typing cursor */
+.ai-cursor::after {
+  content: "|";
+  animation: blink 0.8s step-end infinite;
+  color: hsl(195 100% 50%);
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Drag and drop zone */
+.dropzone-active {
+  border-color: hsl(271 81% 56% / 0.5);
+  background: hsl(271 81% 56% / 0.05);
+  box-shadow: inset 0 0 30px hsl(271 81% 56% / 0.1);
+}
+
+/* Score indicator colors */
+.score-excellent { color: hsl(142 71% 45%); }
+.score-good { color: hsl(195 100% 50%); }
+.score-average { color: hsl(45 93% 47%); }
+.score-low { color: hsl(0 84% 60%); }
