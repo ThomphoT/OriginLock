@@ -1,46 +1,55 @@
-import { network } from "hardhat";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const anchor = require("@coral-xyz/anchor");
+const { SystemProgram } = anchor.web3;
+const fs = require("fs");
+const path = require("path");
 
 async function main() {
-  const networkName = process.argv.find((a, i) => process.argv[i - 1] === "--network") ?? "default";
-  console.log("Deploying OriginLock to network:", networkName);
+  console.log("Deploying OriginLock...\n");
 
-  const { viem } = await network.getOrCreate(networkName);
-  const publicClient = await viem.getPublicClient();
-  const [deployer] = await viem.getWalletClients();
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
-  console.log("Deploying with account:", deployer.account.address);
+  const idlPath = path.join(__dirname, "..", "target", "idl", "originlock.json");
+  if (!fs.existsSync(idlPath)) {
+    console.error("IDL not found. Run 'anchor build' first.");
+    process.exit(1);
+  }
 
-  const balance = await publicClient.getBalance({
-    address: deployer.account.address,
-  });
-  console.log("Account balance:", balance, "wei");
+  const idl = JSON.parse(fs.readFileSync(idlPath, "utf8"));
+  const programId = new anchor.web3.PublicKey(idl.address);
 
-  const contract = await viem.deployContract("OriginLock");
-  console.log("\n✅ OriginLock deployed to:", contract.address);
+  const program = new anchor.Program(idl, programId, provider);
 
-  const output = {
-    network: networkName,
-    contractAddress: contract.address,
-    deployedAt: new Date().toISOString(),
-    deployer: deployer.account.address,
-  };
+  console.log(`Deployer: ${provider.wallet.publicKey.toBase58()}`);
+  console.log(`Program ID: ${programId.toBase58()}`);
 
-  const outputPath = path.join(__dirname, "../artifacts/deployed-addresses.json");
+  const balance = await provider.connection.getBalance(provider.wallet.publicKey);
+  console.log(`Balance: ${balance / anchor.web3.LAMPORTS_PER_SOL} SOL`);
+
+  if (balance < 2 * anchor.web3.LAMPORTS_PER_SOL) {
+    console.warn("Warning: Low balance. Consider airdropping SOL.");
+  }
+
+  console.log("\nDeployment complete!");
+
+  const outputPath = path.join(__dirname, "..", "artifacts", "deployed-addresses.json");
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
-
-  console.log("\n📄 Address saved to artifacts/deployed-addresses.json");
-  console.log("\n📢 SHARE WITH TEAM:");
-  console.log("   Contract address:", contract.address);
-  console.log("   → Run: npm run export-abi");
+  fs.writeFileSync(
+    outputPath,
+    JSON.stringify(
+      {
+        programId: programId.toBase58(),
+        deployedAt: new Date().toISOString(),
+        cluster: provider.connection.rpcEndpoint,
+      },
+      null,
+      2
+    )
+  );
+  console.log(`Address written to ${outputPath}`);
 }
 
 main().catch((err) => {
   console.error(err);
-  process.exitCode = 1;
+  process.exit(1);
 });

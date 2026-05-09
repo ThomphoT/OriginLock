@@ -1,62 +1,178 @@
-# Sample Hardhat 3 Beta Project (`node:test` and `viem`)
+# OriginLock — Blockchain
 
-This project showcases a Hardhat 3 Beta project using the native Node.js test runner (`node:test`) and the `viem` library for Ethereum interactions.
+> **Smart contract for decentralized intellectual property ownership on Solana.**
 
-To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
+---
 
-## Project Overview
+## Overview
 
-This example project includes:
+The OriginLock blockchain component is an [Anchor](https://www.anchor-lang.com/) program deployed on Solana Devnet. It provides immutable timestamped proof of idea ownership through PDA-based account storage.
 
-- A simple Hardhat configuration file.
-- Foundry-compatible Solidity unit tests.
-- TypeScript integration tests using [`node:test`](nodejs.org/api/test.html), the new Node.js native test runner, and [`viem`](https://viem.sh/).
-- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
+---
 
-## Usage
+## Deployed Address
 
-### Running Tests
+| Network | Program ID | Status |
+|---------|-----------|--------|
+| Devnet | `ORILOCk111111111111111111111111111111111111` | Placeholder — update after deploy |
 
-To run all the tests in the project, execute the following command:
+**Explorer:** [Solana Devnet](https://explorer.solana.com/?cluster=devnet)
 
-```shell
-npx hardhat test
+---
+
+## Instructions
+
+### `registerIdea`
+
+Creates a new `IdeaRecord` account seeded by the content hash.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `contentHash` | `string` (64 hex chars) | SHA-256 hash of the idea content |
+| `title` | `string` (max 200 chars) | Human-readable title |
+
+**Accounts:**
+
+| Account | Signer | Writable | Description |
+|---------|--------|----------|-------------|
+| `idea` | No | Yes | PDA derived from `["idea", contentHash]` |
+| `authority` | Yes | Yes | Fee payer and owner |
+| `systemProgram` | No | No | Solana system program |
+
+**Event emitted:** `IdeaRegistered { hash, owner, timestamp }`
+
+### `verifyOwnership`
+
+Reads an existing `IdeaRecord` and returns proof of ownership.
+
+| Returns | Type | Description |
+|---------|------|-------------|
+| `owner` | `PublicKey` | Wallet address of the registrant |
+| `timestamp` | `i64` | Unix timestamp of registration |
+| `title` | `string` | Title of the registered idea |
+
+**Accounts:**
+
+| Account | Signer | Writable | Description |
+|---------|--------|----------|-------------|
+| `idea` | No | No | PDA of the idea to verify |
+
+---
+
+## Account Structure
+
+### `IdeaRecord` (8 + 32 + 4 + 64 + 4 + 200 + 8 + 1 = 321 bytes)
+
+| Field | Type | Offset |
+|-------|------|--------|
+| `owner` | `Pubkey` (32) | 8 |
+| `contentHash` | `String` (4+64) | 40 |
+| `title` | `String` (4+200) | 108 |
+| `timestamp` | `i64` (8) | 312 |
+| `exists` | `bool` (1) | 320 |
+
+---
+
+## Events
+
+### `IdeaRegistered`
+
+| Field | Type | Index |
+|-------|------|-------|
+| `hash` | `string` | Yes |
+| `owner` | `Pubkey` | Yes |
+| `timestamp` | `i64` | No |
+
+---
+
+## Errors
+
+| Code | Name | Message |
+|------|------|---------|
+| 6000 | `HashAlreadyRegistered` | Hash already registered |
+| 6001 | `HashNotFound` | Hash not found |
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Solana CLI 1.18.x
+- Anchor CLI 0.30.x
+- Rust 1.75+ with `bpfel-unknown-unknown` target
+- Node.js 20+
+
+### Install
+
+```bash
+cd blockchain
+npm install
 ```
 
-You can also selectively run the Solidity or `node:test` tests:
+### Build
 
-```shell
-npx hardhat test solidity
-npx hardhat test nodejs
+```bash
+anchor build
 ```
 
-### Make a deployment to Sepolia
+### Test
 
-This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
+```bash
+# Terminal 1: Start local validator
+solana-test-validator
 
-To run the deployment to a local chain:
-
-```shell
-npx hardhat ignition deploy ignition/modules/Counter.ts
+# Terminal 2: Run tests
+anchor test --skip-local-validator
 ```
 
-To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+### Deploy
 
-You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
+```bash
+# Devnet
+anchor deploy --provider.cluster devnet
 
-To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
-
-```shell
-npx hardhat keystore set SEPOLIA_PRIVATE_KEY
+# After deploy, update Program ID in:
+# - programs/originlock/src/lib.rs (declare_id!)
+# - Anchor.toml ([programs.devnet])
+# - artifacts/deployed-addresses.json
 ```
 
-After setting the variable, you can run the deployment with the Sepolia network:
+---
 
-```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run export-idl` | Copy IDL to `frontend/src/services/abi.json` |
+| `npm run verify -- <hash>` | Verify ownership from CLI |
+
+---
+
+## Quick Reference
+
+```bash
+# Build the program
+anchor build
+
+# Run tests
+anchor test
+
+# Deploy to devnet
+anchor deploy --provider.cluster devnet
+
+# Export IDL for frontend
+npm run export-idl
+
+# Verify an idea from CLI
+npm run verify -- abc123...  # 64-char hex hash
 ```
 
-## SMART CONTRACT
-``` Smart contract address:
-    0xc27b1dfedb1c3973f35cbc713300a73dd85400d7
-    ```
+---
+
+## Links
+
+- [Anchor Documentation](https://www.anchor-lang.com/)
+- [Solana Documentation](https://docs.solana.com/)
+- [Solana Devnet Faucet](https://faucet.solana.com/)
+- [Solana Explorer](https://explorer.solana.com/?cluster=devnet)
