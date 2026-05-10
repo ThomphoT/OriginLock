@@ -20,7 +20,7 @@ public class BlockchainVerificationService {
     private final boolean verificationEnabled;
 
     public BlockchainVerificationService(
-            @Value("${polygon.amoy.rpc-url}") String rpcUrl,
+            @Value("${blockchain.rpc-url}") String rpcUrl,
             @Value("${blockchain.verification.enabled}") boolean verificationEnabled
     ) {
         this.httpClient = HttpClient.newBuilder()
@@ -40,7 +40,7 @@ public class BlockchainVerificationService {
         }
 
         String body = """
-                {"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["%s"],"id":1}
+                {"jsonrpc":"2.0","id":1,"method":"getSignatureStatuses","params":[["%s"],{"searchTransactionHistory":true}]}
                 """.formatted(txHash);
 
         HttpRequest request = HttpRequest.newBuilder(URI.create(rpcUrl))
@@ -52,21 +52,21 @@ public class BlockchainVerificationService {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() < 200 || response.statusCode() > 299) {
-                throw new BlockchainVerificationException("Polygon Amoy RPC returned status " + response.statusCode());
+                throw new BlockchainVerificationException("Blockchain RPC returned status " + response.statusCode());
             }
 
             String responseBody = response.body();
-            if (responseBody == null || responseBody.contains("\"result\":null")) {
-                throw new BlockchainVerificationException("Transaction was not found on Polygon Amoy");
+            if (responseBody == null || responseBody.contains("\"value\":[null]")) {
+                throw new BlockchainVerificationException("Transaction was not found on Solana");
             }
 
-            if (!responseBody.contains("\"status\":\"0x1\"")) {
-                throw new BlockchainVerificationException("Blockchain transaction did not succeed");
+            if (responseBody.contains("\"err\":null")) {
+                return true;
             }
 
-            return true;
+            throw new BlockchainVerificationException("Blockchain transaction did not succeed");
         } catch (IOException ex) {
-            throw new BlockchainVerificationException("Could not reach Polygon Amoy RPC");
+            throw new BlockchainVerificationException("Could not reach blockchain RPC");
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new BlockchainVerificationException("Blockchain verification was interrupted");

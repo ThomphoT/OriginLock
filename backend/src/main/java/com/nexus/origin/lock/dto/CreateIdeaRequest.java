@@ -16,7 +16,10 @@ public record CreateIdeaRequest(
         @Pattern(regexp = "^$|^[a-fA-F0-9]{64}$", message = "Content hash must be exactly 64 hex characters")
         String contentHash,
 
-        @Pattern(regexp = "^$|^0x[a-fA-F0-9]{64}$", message = "Transaction hash must be a 0x-prefixed 64-character hex value")
+        @Pattern(
+                regexp = "^$|^0x[a-fA-F0-9]{64}$|^[1-9A-HJ-NP-Za-km-z]{64,100}$",
+                message = "Transaction hash must be a valid Solana signature or 0x-prefixed EVM hash"
+        )
         String txHash,
 
         Long userId
