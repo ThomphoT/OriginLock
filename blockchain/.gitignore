@@ -1,1 +1,6 @@
 .env
+node_modules/
+origin_lock/node_modules/
+origin_lock/target/
+origin_lock/.anchor/
+origin_lock/test-ledger/

@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "anchor:build": "cd origin_lock && anchor build",
+    "anchor:test": "cd origin_lock && anchor test",
+    "anchor:lint": "cd origin_lock && npm run lint"
+  },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
     "@solana/web3.js": "^1.98.4"

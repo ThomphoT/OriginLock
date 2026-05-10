@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
   Upload,
   FileText,
@@ -29,6 +30,8 @@ const NewIdea: React.FC = () => {
   const [step, setStep] = useState<"form" | "hashing" | "blockchain" | "success">("form");
   const [aiSuggestions, setAiSuggestions] = useState<AISuggestion[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
+  const wallet = useAnchorWallet();
+  const { connection } = useConnection();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -68,15 +71,16 @@ const NewIdea: React.FC = () => {
 
       // Step 2: Register on blockchain
       setStep("blockchain");
-      await blockchainService.registerHash(generatedHash);
+      const tx = await blockchainService.registerHash(connection, wallet, generatedHash, title);
 
       // Step 3: Save idea
-      await ideaService.createIdea(title, description, generatedHash);
+      await ideaService.createIdea(title, description, generatedHash, tx.hash);
 
       setStep("success");
       toast.success("Idea registered successfully!");
     } catch (err) {
-      toast.error("Registration failed. Please try again.");
+      const message = err instanceof Error ? err.message : "Registration failed. Please try again.";
+      toast.error(message);
       setStep("form");
     } finally {
       setSubmitting(false);

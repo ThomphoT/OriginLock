@@ -1,0 +1,134 @@
+{
+  "address": "D1iXnVYxEBs38Q4VJvzLCK7rZBYEGvmwEniTbMx8Afae",
+  "metadata": {
+    "name": "origin_lock",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "OriginLock idea ownership registry"
+  },
+  "instructions": [
+    {
+      "name": "registerIdea",
+      "discriminator": [105, 224, 60, 253, 130, 54, 195, 237],
+      "accounts": [
+        {
+          "name": "ideaRecord",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [105, 100, 101, 97]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "arg",
+                "path": "contentHash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "contentHash",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "IdeaRecord",
+      "discriminator": [54, 121, 30, 207, 14, 119, 28, 94]
+    }
+  ],
+  "events": [
+    {
+      "name": "IdeaRegistered",
+      "discriminator": [204, 228, 79, 180, 142, 191, 180, 2]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidHash",
+      "msg": "Content hash must be exactly 64 hex characters"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidTitle",
+      "msg": "Title must be 1-200 characters"
+    }
+  ],
+  "types": [
+    {
+      "name": "IdeaRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "contentHash",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "IdeaRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "contentHash",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}

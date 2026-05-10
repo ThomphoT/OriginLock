@@ -10,6 +10,12 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 frontend/.env.local
+blockchain/node_modules/
+blockchain/origin_lock/node_modules/
+blockchain/origin_lock/target/
+blockchain/origin_lock/.anchor/
+blockchain/origin_lock/test-ledger/
+blockchain/origin_lock/.env
 
 # General
 .DS_Store

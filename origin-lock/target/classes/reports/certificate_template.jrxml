@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="originlock_certificate"
+              pageWidth="612"
+              pageHeight="792"
+              columnWidth="512"
+              leftMargin="50"
+              rightMargin="50"
+              topMargin="50"
+              bottomMargin="50"
+              uuid="c39f0a66-77db-44b1-b9a2-41fc3447966d">
+    <field name="ideaTitle" class="java.lang.String"/>
+    <field name="ownerName" class="java.lang.String"/>
+    <field name="contentHash" class="java.lang.String"/>
+    <field name="txHash" class="java.lang.String"/>
+    <field name="issuedDate" class="java.lang.String"/>
+    <field name="verificationStatus" class="java.lang.String"/>
+    <title>
+        <band height="692">
+            <rectangle>
+                <reportElement x="0" y="0" width="512" height="692" forecolor="#0D7377" uuid="f459d6f7-6729-4df6-a33c-b2a187a38913"/>
+                <graphicElement>
+                    <pen lineWidth="2.0"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="0" y="42" width="512" height="34" forecolor="#0D7377" uuid="e0eec850-d109-4c4f-932e-423b6b8de4cc"/>
+                <textElement textAlignment="Center">
+                    <font size="26" isBold="true"/>
+                </textElement>
+                <text><![CDATA[OriginLock]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="84" width="512" height="26" uuid="f86fd7e6-bfc0-4236-a15e-bf078e496151"/>
+                <textElement textAlignment="Center">
+                    <font size="15"/>
+                </textElement>
+                <text><![CDATA[Certificate of Idea Ownership]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="56" y="142" width="400" height="24" uuid="afc4308f-a652-4d95-a8d7-cf65a92b5593"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[This certificate records the submitted idea and its ownership metadata.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="60" y="206" width="130" height="22" forecolor="#555555" uuid="f1b52ba2-6982-404c-bf96-497384fb1427"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Idea Title]]></text>
+            </staticText>
+            <textField textAdjust="StretchHeight">
+                <reportElement x="200" y="206" width="250" height="44" uuid="e6d59593-ef1b-4284-8ec2-21e9c78f78c8"/>
+                <textElement>
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{ideaTitle}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="60" y="276" width="130" height="22" forecolor="#555555" uuid="ae63f7f5-352b-437e-a6a3-85a6b179aa8f"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Owner]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="200" y="276" width="250" height="22" uuid="ce3d3e39-52cc-48c7-aedc-54a69cc27cc4"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{ownerName}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="60" y="326" width="130" height="22" forecolor="#555555" uuid="e1567c8b-990a-4d49-83f1-d2c1220c7ca1"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Content Hash]]></text>
+            </staticText>
+            <textField textAdjust="StretchHeight">
+                <reportElement x="200" y="326" width="250" height="48" uuid="ba33f8b0-cb6e-48ee-a69a-0c4f1ded9073"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{contentHash}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="60" y="404" width="130" height="22" forecolor="#555555" uuid="d327ae41-056e-4668-b1a7-1181a95d9f76"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Blockchain TX]]></text>
+            </staticText>
+            <textField textAdjust="StretchHeight">
+                <reportElement x="200" y="404" width="250" height="48" uuid="a47d6f63-4a94-484c-8732-b7d032ad046d"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{txHash}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="60" y="482" width="130" height="22" forecolor="#555555" uuid="bbe2a696-2230-4e8e-8877-a5e86330f685"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Issued]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="200" y="482" width="250" height="22" uuid="f9b058af-70c9-4f36-9dff-e4cc7359124e"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{issuedDate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="60" y="548" width="392" height="26" forecolor="#0D7377" uuid="e71e6ec2-dd0d-4789-a168-2248c599ad21"/>
+                <textElement textAlignment="Center">
+                    <font size="13" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{verificationStatus}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="60" y="612" width="392" height="24" forecolor="#777777" uuid="c455c923-78de-4708-9481-67a085f0d081"/>
+                <textElement textAlignment="Center">
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[Generated by OriginLock MVP]]></text>
+            </staticText>
+        </band>
+    </title>
+</jasperReport>

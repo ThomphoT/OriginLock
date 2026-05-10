@@ -57,7 +57,7 @@ OriginLock introduces a decentralized proof-of-ownership platform powered by blo
 When a user submits an idea:
 
 1. The system generates a unique SHA-256 cryptographic hash from the content
-2. The hash is recorded on the blockchain
+2. The hash is recorded on Solana through the Anchor program
 3. Ownership and timestamps become immutable and publicly verifiable
 
 This creates permanent proof that:
@@ -189,15 +189,15 @@ OriginLock follows a modular architecture consisting of four major layers:
 
 ## 🔗 Blockchain
 
-> In Rust and Solidity, timestamp and smart contracts.
+> Solana Anchor program for timestamped idea ownership records.
 
-| Technology   | Purpose                    |
-| ------------ | -------------------------- |
-| Solidity     | Smart contracts            |
-| Hardhat      | Smart contract development |
-| Polygon Amoy | Blockchain testnet         |
-| Ethers.js    | Blockchain communication   |
-| Rust         | Future optimization layer  |
+| Technology      | Purpose                           |
+| --------------- | --------------------------------- |
+| Solana Devnet   | Blockchain testnet                |
+| Anchor          | Rust smart contract framework     |
+| Rust            | On-chain program language         |
+| @solana/web3.js | Frontend blockchain communication |
+| Wallet Adapter  | Phantom/Solana wallet connection  |
 
 ---
 
@@ -267,7 +267,7 @@ Backend generates SHA-256 hash
         ↓
 Blockchain transaction initiated
         ↓
-Hash stored on Polygon blockchain
+Hash stored on Solana devnet
         ↓
 Timestamp + ownership recorded
         ↓
@@ -325,7 +325,7 @@ Security measures include:
 | Frontend   | Vercel               |
 | Backend    | Render               |
 | Database   | PostgreSQL           |
-| Blockchain | Polygon Amoy Testnet |
+| Blockchain | Solana Devnet |
 | AI Runtime | Ollama               |
 
 ---

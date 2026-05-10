@@ -1,11 +1,12 @@
 import { AnchorProvider, Program, web3 } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
+import { createHash } from 'crypto';
 import idl from '../target/idl/origin_lock.json';
 
-const PROGRAM_ID = new PublicKey(process.env.REACT_APP_PROGRAM_ID!);
+const PROGRAM_ID = new PublicKey(process.env.REACT_APP_PROGRAM_ID ?? idl.address);
 
 function getProgram(provider: AnchorProvider) {
-    return new Program(idl as any, PROGRAM_ID, provider);
+    return new Program(idl as any, provider);
 }
 
 export async function registerIdea(
@@ -14,8 +15,9 @@ export async function registerIdea(
     title: string
 ): Promise<string> {
     const program = getProgram(provider);
+    const hashSeed = createHash('sha256').update(contentHash).digest();
     const [ideaPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from('idea'), provider.wallet.publicKey.toBuffer(), Buffer.from(contentHash)],
+        [Buffer.from('idea'), provider.wallet.publicKey.toBuffer(), hashSeed],
         PROGRAM_ID
     );
     const tx = await program.methods
@@ -34,9 +36,10 @@ export async function getIdeaRecord(
     ownerPubkey: string,
     contentHash: string
 ): Promise<{ owner: string; title: string; timestamp: number } | null> {
-    const program = new Program(idl as any, PROGRAM_ID, { connection } as any);
+    const program = new Program(idl as any, { connection } as any);
+    const hashSeed = createHash('sha256').update(contentHash).digest();
     const [ideaPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from('idea'), new PublicKey(ownerPubkey).toBuffer(), Buffer.from(contentHash)],
+        [Buffer.from('idea'), new PublicKey(ownerPubkey).toBuffer(), hashSeed],
         PROGRAM_ID
     );
     try {

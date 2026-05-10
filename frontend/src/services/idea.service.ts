@@ -84,14 +84,15 @@ export const ideaService = {
     return mockIdeas.find((i) => i.id === id);
   },
 
-  async createIdea(_title: string, _description: string, _hash: string): Promise<Idea> {
+  async createIdea(_title: string, _description: string, _hash: string, _transactionHash?: string): Promise<Idea> {
     await new Promise((r) => setTimeout(r, 1200));
     return {
       id: "idea_" + Date.now(),
       title: _title,
       description: _description,
       hash: _hash,
-      status: "pending",
+      transactionHash: _transactionHash,
+      status: _transactionHash ? "verified" : "pending",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       userId: "usr_001",
